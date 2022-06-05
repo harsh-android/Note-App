@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Project/NoteApp/app/src/main/res/drawable/btn_back.xml" value="0.2" />
         <entry key="..\:/Android Project/NoteApp/app/src/main/res/layout/activity_add_note.xml" value="0.25" />
         <entry key="..\:/Android Project/NoteApp/app/src/main/res/layout/activity_main.xml" value="0.21041666666666667" />
       </map>
