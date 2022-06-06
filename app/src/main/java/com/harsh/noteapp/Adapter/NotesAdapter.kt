@@ -3,8 +3,10 @@ package com.harsh.noteapp.Adapter
 import android.app.Activity
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.harsh.noteapp.Database.RoomDB
 import com.harsh.noteapp.MainActivity
@@ -40,6 +42,37 @@ class NotesAdapter(mainActivity: Activity, notes: List<Notes>) :
         holder.txt_note.text = dataList.get(position).note
 
         holder.card_back.setCardBackgroundColor(Color.parseColor(dataList.get(position).color))
+
+        holder.itemView.setOnLongClickListener(object :View.OnLongClickListener {
+            override fun onLongClick(p0: View?): Boolean {
+
+                var menu = PopupMenu(activity,p0)
+                menu.menuInflater.inflate(R.menu.list_option,menu.menu)
+
+                menu.setOnMenuItemClickListener(object :PopupMenu.OnMenuItemClickListener{
+                    override fun onMenuItemClick(p0: MenuItem?): Boolean {
+
+                        when(p0?.itemId) {
+
+                            R.id.delete -> {
+                                roomDB.mainDao().delete(dataList.get(position))
+                                MainActivity.UpdateLoadNotes()
+                            }
+
+
+
+
+                        }
+
+                        return false
+                    }
+                })
+
+                menu.show()
+
+                return false
+            }
+        })
 
         holder.pinn.setOnClickListener {
 
