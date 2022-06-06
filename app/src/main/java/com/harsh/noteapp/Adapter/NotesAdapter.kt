@@ -1,5 +1,6 @@
 package com.harsh.noteapp.Adapter
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -36,7 +37,7 @@ class NotesAdapter(mainActivity: Activity, notes: List<Notes>) :
         return NotesHolder(view)
     }
 
-    override fun onBindViewHolder(holder: NotesHolder, position: Int) {
+    override fun onBindViewHolder(holder: NotesHolder, @SuppressLint("RecyclerView") position: Int) {
 
         holder.txt_title.text = dataList.get(position).title
         holder.txt_note.text = dataList.get(position).note
