@@ -60,9 +60,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/_8sdp"
-            android:text="Hello Test Dat aAddedd I Am Harsh Malaviya and I Am Android Developer"
+            android:text="Hello Test Dat Added I Am Harsh Malaviya and I Am Android Developer"
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/txt_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_8sdp"
+            android:text="20/05/2022 10:30:00 PM"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_8sdp" />
 
     </LinearLayout>
 

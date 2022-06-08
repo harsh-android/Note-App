@@ -53,10 +53,11 @@ class AddNoteActivity : AppCompatActivity() {
                 if (listing.size <= 0) {
                     id = 1;
                 } else {
-                    id = listing.size+1
+                    id = listing.get(0).id
+                    id++
                 }
                 Log.e(TAG, "onCreate: Last ID "+listing.get(listing.size-1).id  )
-                Log.e(TAG, "onCreate: Array Size "+listing.size  )
+                Log.e(TAG, "onCreate: Array Size "+listing.size)
             }catch (e:Exception) {
                 id = 1
             }

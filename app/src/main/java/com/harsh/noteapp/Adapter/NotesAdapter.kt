@@ -2,7 +2,9 @@ package com.harsh.noteapp.Adapter
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -14,6 +16,7 @@ import com.harsh.noteapp.MainActivity
 import com.harsh.noteapp.Model.Notes
 import com.harsh.noteapp.R
 import kotlinx.android.synthetic.main.note_item.view.*
+import kotlinx.android.synthetic.main.show_notes_dialog.*
 import java.util.ArrayList
 
 class NotesAdapter(mainActivity: Activity, notes: List<Notes>) :
@@ -37,31 +40,77 @@ class NotesAdapter(mainActivity: Activity, notes: List<Notes>) :
         return NotesHolder(view)
     }
 
-    override fun onBindViewHolder(holder: NotesHolder, @SuppressLint("RecyclerView") position: Int) {
+    @SuppressLint("ResourceAsColor")
+    override fun onBindViewHolder(
+        holder: NotesHolder,
+        @SuppressLint("RecyclerView") position: Int
+    ) {
 
         holder.txt_title.text = dataList.get(position).title
         holder.txt_note.text = dataList.get(position).note
 
+        holder.txt_title.isSelected = true
+
         holder.card_back.setCardBackgroundColor(Color.parseColor(dataList.get(position).color))
 
-        holder.itemView.setOnLongClickListener(object :View.OnLongClickListener {
+
+        holder.itemView.setOnClickListener {
+            var dialog = Dialog(activity)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(android.R.color.transparent))
+            dialog.setContentView(R.layout.show_notes_dialog)
+
+            dialog.txt_title.text = dataList.get(position).title
+            dialog.txt_title.isSelected = true
+            dialog.txt_notes.text = dataList.get(position).note
+            dialog.txt_date.text = dataList.get(position).date
+            dialog.card_back.setCardBackgroundColor(Color.parseColor(dataList.get(position).color))
+            if (dataList.get(position).pinned) {
+                dialog.pinn.setImageResource(R.drawable.fill_pin)
+            } else {
+                dialog.pinn.setImageResource(R.drawable.blank_pin)
+            }
+            dialog.pinn.setOnClickListener {
+
+                var f_pin = false
+                if (dataList.get(position).pinned)
+                    f_pin = false
+                else
+                    f_pin = true
+
+                roomDB.mainDao().updateData(
+                    dataList.get(position).id,
+                    dataList.get(position).title,
+                    dataList.get(position).note,
+                    dataList.get(position).color,
+                    f_pin
+                )
+                if (dataList.get(position).pinned) {
+                    dialog.pinn.setImageResource(R.drawable.blank_pin)
+                } else {
+                    dialog.pinn.setImageResource(R.drawable.fill_pin)
+                }
+                MainActivity.UpdateLoadNotes()
+
+            }
+            dialog.show()
+
+        }
+
+        holder.itemView.setOnLongClickListener(object : View.OnLongClickListener {
             override fun onLongClick(p0: View?): Boolean {
 
-                var menu = PopupMenu(activity,p0)
-                menu.menuInflater.inflate(R.menu.list_option,menu.menu)
+                var menu = PopupMenu(activity, p0)
+                menu.menuInflater.inflate(R.menu.list_option, menu.menu)
 
-                menu.setOnMenuItemClickListener(object :PopupMenu.OnMenuItemClickListener{
+                menu.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
                     override fun onMenuItemClick(p0: MenuItem?): Boolean {
 
-                        when(p0?.itemId) {
+                        when (p0?.itemId) {
 
                             R.id.delete -> {
                                 roomDB.mainDao().delete(dataList.get(position))
                                 MainActivity.UpdateLoadNotes()
                             }
-
-
-
 
                         }
 
@@ -80,8 +129,8 @@ class NotesAdapter(mainActivity: Activity, notes: List<Notes>) :
             var f_pin = false
             if (dataList.get(position).pinned)
                 f_pin = false
-                else
-                    f_pin = true
+            else
+                f_pin = true
 
             roomDB.mainDao().updateData(
                 dataList.get(position).id,
