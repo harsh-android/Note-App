@@ -5,23 +5,33 @@ import android.app.Activity
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
+import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.harsh.noteapp.Database.RoomDB
 import com.harsh.noteapp.MainActivity
 import com.harsh.noteapp.Model.Notes
 import com.harsh.noteapp.R
+import kotlinx.android.synthetic.main.activity_add_note.*
+import kotlinx.android.synthetic.main.activity_add_note.select_color
+import kotlinx.android.synthetic.main.activity_add_note.selected_color
+import kotlinx.android.synthetic.main.edit_note.*
 import kotlinx.android.synthetic.main.note_item.view.*
 import kotlinx.android.synthetic.main.show_notes_dialog.*
-import java.util.ArrayList
+import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
 
 class NotesAdapter(mainActivity: Activity, notes: List<Notes>) :
     RecyclerView.Adapter<NotesAdapter.NotesHolder>() {
 
+    lateinit var selectedColor:String
     var activity = mainActivity
     var dataList = notes
     var roomDB: RoomDB = RoomDB.getInstance(mainActivity)
@@ -111,6 +121,9 @@ class NotesAdapter(mainActivity: Activity, notes: List<Notes>) :
                                 roomDB.mainDao().delete(dataList.get(position))
                                 MainActivity.UpdateLoadNotes()
                             }
+                            R.id.edit -> {
+                                editNotes(position)
+                            }
 
                         }
 
@@ -148,6 +161,43 @@ class NotesAdapter(mainActivity: Activity, notes: List<Notes>) :
         } else {
             holder.pinn.setImageResource(R.drawable.blank_pin)
         }
+
+    }
+
+    @SuppressLint("ResourceType")
+    private fun editNotes(position: Int) {
+
+        var editNoteDialog = Dialog(activity)
+        editNoteDialog.setContentView(R.layout.edit_note)
+        editNoteDialog.window?.setBackgroundDrawable(ColorDrawable(android.R.color.transparent))
+        var listing = roomDB.mainDao().getAllNotes()
+        var note = listing.get(position)
+
+        editNoteDialog.selectedColor.setCardBackgroundColor(Color.parseColor(note.color))
+        selectedColor = note.color
+        editNoteDialog.edNotes.contentText = note.note
+        editNoteDialog.edTitle.setText(note.title)
+
+        editNoteDialog.selectColor.setOnClickListener {
+            MaterialColorPickerDialog
+                .Builder(activity)
+                .setTitle("Pick Theme")
+                .setColorShape(ColorShape.SQAURE)
+                .setDefaultColor(Color.RED)
+                .setColorListener { color, colorHex ->
+                    editNoteDialog.selectedColor.setCardBackgroundColor(Color.parseColor(colorHex))
+                    selectedColor = colorHex
+                }
+                .show()
+        }
+
+        editNoteDialog.updateNote.setOnClickListener {
+            roomDB.mainDao().updateData(note.id,editNoteDialog.edTitle.text.toString(),editNoteDialog.edNotes.contentText,selectedColor,note.pinned)
+            editNoteDialog.dismiss()
+            MainActivity.UpdateLoadNotes()
+        }
+
+        editNoteDialog.show()
 
     }
 
